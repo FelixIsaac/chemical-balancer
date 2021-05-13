@@ -9,20 +9,14 @@
 
 // Balances the given formula string and returns equation object
 export function balance(formulaStr) {
-  try {
-    const eqn = parse(formulaStr); // Parse equation
-    const matrix = buildMatrix(eqn); // Set up matrix
-    solve(matrix); // Solve linear system
-    const coefs = extractCoefficients(matrix); // Get coefficients
-    checkAnswer(eqn, coefs); // Self-test, should not fail
+  const eqn = parse(formulaStr); // Parse equation
+  const matrix = buildMatrix(eqn); // Set up matrix
+  solve(matrix); // Solve linear system
+  const coefs = extractCoefficients(matrix); // Get coefficients
+  checkAnswer(eqn, coefs); // Self-test, should not fail
 
-    return { eqn, coefs };
-    // balancedElem.appendChild(eqn.toHtml(coefs));  // Display balanced equation
-  } catch (err) {
-    setMessage(err.toString());
-  }
-
-  return {};
+  return { eqn, coefs };
+  // balancedElem.appendChild(eqn.toHtml(coefs));  // Display balanced equation
 }
 
 /* Core number-processing fuctions */
@@ -346,10 +340,8 @@ function parse(formulaStr) {
     return parseEquation(tokenizer);
   } catch (err) {
     if (typeof err === 'string') { // Simple error message string
-      setMessage(`Syntax error: ${err}`);
+      throw `Syntax error: ${err}`;
     } else if ('start' in err) { // Error message object with start and possibly end character indices
-      setMessage(`Syntax error: ${err.message}`);
-
       const { start } = err;
       let end = 'end' in err ? err.end : err.start;
 
@@ -359,11 +351,10 @@ function parse(formulaStr) {
       }
 
       if (start === end) end++;
+      throw `Syntax error: ${err.message}`;
     } else {
-      setMessage('Assertion error');
+      throw 'Assertion error';
     }
-
-    return new Error(err);
   }
 }
 
@@ -791,11 +782,6 @@ function indexOf(array, item) {
 // Returns a shallow copy of the given array. Usually used for making defensive copies.
 function cloneArray(array) {
   return array.slice(0);
-}
-
-// Sets the page's message element to the given string. Returns nothing.
-function setMessage(str) {
-  console.info(str);
 }
 
 // Creates a new text node with the given text and appends it to the given DOM node
