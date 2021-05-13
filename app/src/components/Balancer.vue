@@ -30,13 +30,23 @@
     </el-button-group>
     <el-alert
       type="success"
-      class="solution"
-      show-icon
-      center
+      class="display"
       :closable="false"
       v-show="solution"
+      show-icon
+      center
     >
       <div v-html="solution" style="font-size: 30px"/>
+    </el-alert>
+    <el-alert
+      type="error"
+      class="display"
+      :closable="false"
+      v-show="error"
+      show-icon
+      center
+    >
+      <span style="font-size: 30px">{{ error }}</span>
     </el-alert>
   </el-main>
 </template>
@@ -53,20 +63,25 @@ export default {
   data: () => ({
     isBalancing: false,
     solution: null,
+    error: null,
     value: '',
   }),
   methods: {
     balance() {
       this.isBalancing = true;
       this.solution = null;
+      this.error = null;
 
-      const { eqn, coefs } = balanceEquation(this.value);
+      try {
+        const { eqn, coefs } = balanceEquation(this.value);
 
-      setTimeout(() => {
-        this.isBalancing = false;
-        this.solution = eqn.toHtml(coefs).outerHTML;
-        console.log(this.solution);
-      }, 300);
+        setTimeout(() => {
+          this.isBalancing = false;
+          this.solution = eqn.toHtml(coefs).outerHTML;
+        }, 300);
+      } catch (err) {
+        this.error = err.toString();
+      }
     },
     submit(e) {
       e.preventDefault();
@@ -90,7 +105,7 @@ h1 {
   width: 50vw;
 }
 
-.solution {
+.display {
   margin: 30px 0;
   padding: 30px;
 }
