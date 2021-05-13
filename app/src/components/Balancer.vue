@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <el-main>
     <h1>Chemical Balancer</h1>
     <el-form inline status-icon @submit.native="submit">
       <el-form-item>
@@ -21,7 +21,24 @@
         </el-button>
       </el-form-item>
     </el-form>
-  </main>
+    <el-button-group>
+      <el-button
+        type="primary"
+        icon="el-icon-refresh"
+        @click="random"
+      >Solve random equation</el-button>
+    </el-button-group>
+    <el-alert
+      type="success"
+      class="solution"
+      show-icon
+      center
+      :closable="false"
+      v-show="solution"
+    >
+      <div v-html="solution" style="font-size: 30px"/>
+    </el-alert>
+  </el-main>
 </template>
 
 <script>
@@ -35,16 +52,21 @@ export default {
   components: {},
   data: () => ({
     isBalancing: false,
+    solution: null,
     value: '',
   }),
   methods: {
     balance() {
       this.isBalancing = true;
+      this.solution = null;
 
       const { eqn, coefs } = balanceEquation(this.value);
-      console.log(eqn.toHtml(coefs));
 
-      this.isBalancing = false;
+      setTimeout(() => {
+        this.isBalancing = false;
+        this.solution = eqn.toHtml(coefs).outerHTML;
+        console.log(this.solution);
+      }, 300);
     },
     submit(e) {
       e.preventDefault();
@@ -65,6 +87,11 @@ h1 {
 }
 
 .equation {
-  width: 70vw;
+  width: 50vw;
+}
+
+.solution {
+  margin: 30px 0;
+  padding: 30px;
 }
 </style>
