@@ -11,26 +11,47 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="balance">Balance</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-magic-stick"
+          @click="balance"
+          :loading="isBalancing"
+        >
+          {{ isBalancing ? "Balancing..." : "Balance"}}
+        </el-button>
       </el-form-item>
     </el-form>
   </main>
 </template>
 
 <script>
+import {
+  balance as balanceEquation,
+  random as randomEquation,
+} from '../library/chem-balancer';
+
 export default {
   name: 'Balancer',
   components: {},
   data: () => ({
-    isLoading: false,
+    isBalancing: false,
     value: '',
   }),
   methods: {
     balance() {
-      console.log(this.value);
+      this.isBalancing = true;
+
+      const { eqn, coefs } = balanceEquation(this.value);
+      console.log(eqn.toHtml(coefs));
+
+      this.isBalancing = false;
     },
     submit(e) {
       e.preventDefault();
+      this.balance();
+    },
+    random() {
+      this.value = randomEquation();
       this.balance();
     },
   },
