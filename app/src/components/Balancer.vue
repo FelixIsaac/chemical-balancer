@@ -80,6 +80,7 @@ export default {
           this.solution = eqn.toHtml(coefs).outerHTML;
         }, 300);
       } catch (err) {
+        this.isBalancing = false;
         this.error = err.toString();
       }
     },
